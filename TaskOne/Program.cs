@@ -101,6 +101,93 @@ namespace TaskOne
             }
         }
 
+        public static void DrownItDown()
+        {
+            char choice = ' ';
+            string fileDir = " ";
+            if (guidArray.Count() != 0) //Check if folders where even created at first place
+            {
+                val = 0;
+                flag0 = false;
+
+                try
+                {
+                    do
+                    {
+                        Console.Write("Enter how deep to make file: ");
+                        val = Convert.ToInt32(Console.ReadLine());
+                    } while (val < 0);
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("FormatException catched.");
+                    flag0 = true;
+                }
+                catch (OverflowException)
+                {
+                    Console.WriteLine("OverflowException catched.");
+                    flag0 = true;
+                }
+                finally { }
+
+                if (guidArray.Count() >= val)
+                {
+                    if (flag0 == false)
+                    {
+                        string fileName = "emptyfile";
+
+                        fileDir = guidArray[val - 1] + "\\" + fileName;
+                        if (!File.Exists(fileDir))
+                        {
+                            File.Create(fileDir).Close();
+                        }
+                        else
+                        {
+                            try
+                            {
+                                Console.WriteLine("File exist already. Overwrite? Y/N");
+                                choice = Convert.ToChar(Console.ReadLine());
+                                if (choice == 'Y')
+                                {
+                                    File.Delete(fileDir);
+                                    File.Create(fileDir).Close();
+                                }
+
+                            }
+                            catch (FormatException)
+                            {
+                                Console.WriteLine("FormatException catched.");
+                            }
+                            finally { }
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("There are no such subfolder!");
+                }
+
+            }
+            else
+            {
+                try
+                {
+                    Console.WriteLine("There are no folders. Want to Create some? Y/N");
+                    choice = Convert.ToChar(Console.ReadLine());
+                    if (choice == 'Y')
+                    {
+                        DeepDive();
+                    }
+
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("FormatException catched.");
+                }
+                finally { }
+            }
+        }
+
         public static void Exit()
         {
             Console.WriteLine("\nProgram will close.");
