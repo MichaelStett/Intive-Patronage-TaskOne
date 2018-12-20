@@ -8,19 +8,19 @@ namespace TaskOne
 {
     class Program
     {
-        static List<string> guidList = new List<string>();
-        static Int32 val = 0;
+        static List<string> GuidList = new List<string>();
+        static Int32 funcVal = 0;
         static bool flag0 = false;
-
-        public static void FizzBuzz() //Output if number is divisible by 2 and/or 3
+        
+        public static void FizzBuzz() //Output if number is divisible by 2 and/or 3 
         {
-            try
+            try //User input
             {
                 do
                 {
                     Console.Write("Enter the number in the range <0, 1000>:");
-                    val = Convert.ToInt32(Console.ReadLine());
-                } while (!Enumerable.Range(0, 1000).Contains(val));
+                    funcVal = Convert.ToInt32(Console.ReadLine());
+                } while (!Enumerable.Range(0, 1000).Contains(funcVal));
             }
             catch (Exception e) //This handle all exceptions 
             {
@@ -29,26 +29,34 @@ namespace TaskOne
             }
             finally { }
 
-            if (flag0 == false)
+            if (flag0 == false) //Checks user input flag
             {
-                if (val % 2 == 0) Console.Write("Fizz");
-                if (val % 3 == 0) Console.Write("Buzz");
-                Console.WriteLine(" ");
+                if (funcVal % 2 == 0)
+                {
+                    Console.Write("Fizz");
+                }
+
+                if (funcVal % 3 == 0)
+                {
+                    Console.Write("Buzz");
+                }
+
+                Console.WriteLine();
             }
         }
-
-        public static void DeepDive()
+        
+        public static void DeepDive() //Creates 'funcVal' number of nested folders 
         {
-            val = 0;
+            funcVal = 0;
             flag0 = false;
 
-            try
+            try //User input 
             {
                 do
                 {
                     Console.Write("Enter subfolders count:");
-                    val = Convert.ToInt32(Console.ReadLine());
-                } while (val <= 0);
+                    funcVal = Convert.ToInt32(Console.ReadLine());
+                } while (funcVal <= 0);
             }
             catch (Exception e)
             {
@@ -57,61 +65,84 @@ namespace TaskOne
             }
             finally { }
 
-            if (flag0 == false)
+            if (flag0 == false) //Checks user input flag
             {
-
-                if (val > 5)
+                const Int32 nestLimit = 5;
+                if (funcVal > nestLimit)
                 {
-                    Console.WriteLine("Maximum of 5 nested folders can be created.");
-                    val = 5;
+                    Console.WriteLine("Maximum of {0} nested folders can be created.", funcVal = nestLimit);
                 }
+
                 StringBuilder pathDir = new StringBuilder(); //Path of Directory
                 pathDir.Append(@"C:\Users\");
                 pathDir.Append(Environment.UserName);
                 pathDir.Append(@"\Desktop");                
 
-                guidList.Clear(); //Clears List before creating new one
-
-                for (int i = 0; i < val; i++)
-                {                    
-                    pathDir.Append("\\");
+                GuidList.Clear(); //Clears List before creating new directory
+               
+                foreach (int index in Enumerable.Range(0, funcVal)) 
+                {
+                    pathDir.Append(@"\");
                     pathDir.Append(Guid.NewGuid().ToString());
-                    guidList.Add(pathDir.ToString()); //Set List[i] to path
+
+                    GuidList.Add(pathDir.ToString()); //Add new element to GuidList
                     
-                    if (flag0 == true) break; //If creating directory failed once exit loop
+                    if (flag0 == true)
+                    {
+                        break; //If creating directory failed once exit loop
+                    }
 
                     try
                     {
-                        DirectoryInfo Dir = Directory.CreateDirectory(pathDir.ToString());                        
+                        Directory.CreateDirectory(pathDir.ToString());                        
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("{0} catched.", e.GetType().ToString().Replace("System.", ""));
-                        guidList.Clear();
+                        Console.WriteLine("{0} catched.", e.GetType().ToString().Replace("System.", ""));                        
                         flag0 = true;
+
+                        GuidList.Clear();
+                        Console.WriteLine("No directory created.");
                     }
                     finally { }
                 }
             }
         }
 
-        public static void DrownItDown() //Create empty file in specific directory
+        public static void DrownItDown() //Create empty file in specific directory 
         {
             char choice;
-            
-            StringBuilder fileDir = new StringBuilder(); //File directory            
 
-            if (guidList.Count() > 0) //Check if directory where even created at first place
+            if (GuidList.Count() <= 0) //Check if directory where even created at first place
+            {
+                try //User input
+                {
+                    Console.WriteLine("There are no folders. Want to Create some? Y/N");
+                    choice = Convert.ToChar(Console.ReadLine());
+
+                    if (choice == 'Y' || choice == 'y')
+                    {
+                        DeepDive();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("{0} catched.", e.GetType().ToString().Replace("System.", ""));
+                }
+                finally { }
+            }
+            else //If not created at first place 
             {
                 flag0 = false;
-                val = 0;
-                try
+                funcVal = 0;
+
+                try //User input 
                 {
                     do
-                    {                        
+                    {
                         Console.Write("Enter how deep to make file: ");
-                        val = Convert.ToInt32(Console.ReadLine());
-                    } while (val < 0);
+                        funcVal = Convert.ToInt32(Console.ReadLine());
+                    } while (funcVal <= 0);
                 }
                 catch (Exception e)
                 {
@@ -120,27 +151,42 @@ namespace TaskOne
                 }
                 finally { }
 
-                if (guidList.Count() > val) //Check if directory isn't empty
+                if (GuidList.Count() <= funcVal) //Check if directory isn't empty
+                {
+                    Console.WriteLine("There are no such subfolder! File can't created.");
+                }
+                else
                 {
                     if (flag0 == false) //Checks user input flag
                     {
-                        string fileName = "emptyfile.txt";                        
-                        Console.WriteLine(guidList.ElementAt(val - 1));
-                        fileDir.Append(guidList.ElementAt(val - 1));
+                        var fileName = "emptyfile.txt";
+
+                        StringBuilder fileDir = new StringBuilder(); //File directory      
+                        fileDir.Append(GuidList.ElementAt(funcVal - 1));
                         fileDir.Append(@"\");
                         fileDir.Append(fileName);
-                        Console.WriteLine(fileDir);
 
                         if (!File.Exists(fileDir.ToString()))
                         {
-                            File.Create(fileDir.ToString()).Close();
+                            try
+                            {
+                                File.Create(fileDir.ToString()).Close();
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine("{0} catched.", e.GetType().ToString().Replace("System.", ""));
+                                flag0 = true;
+
+                                Console.WriteLine("No file created.");
+                            }
                         }
                         else //If file exit already
                         {
-                            try
+
+                            try //User input
                             {
                                 Console.WriteLine("File exist already. Overwrite? Y/N");
-                                choice = Convert.ToChar(Console.ReadKey());
+                                choice = Convert.ToChar(Console.ReadLine());
 
                                 if (choice == 'Y' || choice == 'y')
                                 {
@@ -156,37 +202,22 @@ namespace TaskOne
                         }
                     }
                 }
-                else
-                {
-                    Console.WriteLine("There are no such subfolder!");
-                }
-            }
-            else //If not created at first place 
-            {
-                try
-                {
-                    Console.WriteLine("There are no folders. Want to Create some? Y/N");
-                    choice = Convert.ToChar(Console.ReadKey());
-
-                    if (choice == 'Y' || choice == 'y') DeepDive();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("{0} catched.", e.GetType().ToString().Replace("System.", ""));
-                }
-                finally { }
             }
         }
 
         public static void Exit()
         {
+            //for debug mode use here -> Console.ReadKey();
             return;
         }
 
         static void Main(string[] args)
         {
-            //FizzBuzz();
+            FizzBuzz();
             DeepDive();
+            DrownItDown();
+            DrownItDown();
+            GuidList.Clear();
             DrownItDown();
             Exit();
         }
