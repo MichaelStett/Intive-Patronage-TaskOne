@@ -9,11 +9,14 @@ namespace TaskOne
     class Program
     {
         static List<string> GuidList = new List<string>();
-        static Int32 funcVal = 0;
-        static bool flag0 = false;
+        static Int32 funcVal;
+        static bool flag0;
         
         public static void FizzBuzz() //Output if number is divisible by 2 and/or 3 
         {
+            funcVal = 0;
+            flag0 = false;
+
             try //User input
             {
                 do
@@ -111,6 +114,9 @@ namespace TaskOne
 
         public static void DrownItDown() //Create empty file in specific directory 
         {
+            flag0 = false;
+            funcVal = 0;
+
             char choice;
 
             if (GuidList.Count() <= 0) //Check if directory where even created at first place
@@ -133,9 +139,6 @@ namespace TaskOne
             }
             else //If not created at first place 
             {
-                flag0 = false;
-                funcVal = 0;
-
                 try //User input 
                 {
                     do
