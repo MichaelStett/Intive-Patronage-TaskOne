@@ -32,7 +32,7 @@ namespace TaskOne
             }
             finally { }
 
-            if (isFlagged == false) //User input flag
+            if (!isFlagged) //User input flag
             {
                 if (funcVal % 2 == 0)
                 {
@@ -68,7 +68,7 @@ namespace TaskOne
             }
             finally { }
 
-            if (isFlagged == false) //User input flag
+            if (!isFlagged) //User input flag
             {
                 const Int32 nestLimit = 5;
                 if (funcVal > nestLimit)
@@ -154,7 +154,7 @@ namespace TaskOne
                 }
                 else
                 {
-                    if (isFlagged == false) //User input flag
+                    if (!isFlagged) //User input flag
                     {
                         string fileName = "emptyfile.txt";
 
@@ -190,9 +190,7 @@ namespace TaskOne
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine("\n{0} catched. \n{1} \n", ex.GetType().FullName.Replace("System.", ""), ex.Message);
-                                isFlagged = true;
-
+                                Console.WriteLine("\n{0} catched. \n{1} \n", ex.GetType().FullName.Replace("System.", ""), ex.Message);                                
                                 Console.WriteLine("No file created.");
                             }
                             finally { }
