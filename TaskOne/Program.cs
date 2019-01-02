@@ -10,12 +10,12 @@ namespace TaskOne
     {
         static List<string> GuidList = new List<string>();
         static Int32 funcVal;
-        static bool flag0;
+        static bool isFlagged;
         
         public static void FizzBuzz() //Output if number is divisible by 2 and/or 3 
         {
             funcVal = 0;
-            flag0 = false;
+            isFlagged = false;
 
             try //User input
             {
@@ -25,14 +25,14 @@ namespace TaskOne
                     funcVal = Convert.ToInt32(Console.ReadLine());
                 } while (!Enumerable.Range(0, 1000).Contains(funcVal));
             }
-            catch (Exception e) //This handle all exceptions 
+            catch (Exception ex) //This handle any exception
             {
-                Console.WriteLine("{0} catched.", e.GetType().ToString().Replace("System.", "")); 
-                flag0 = true;
+                Console.WriteLine("\n{0} catched. \n{1} \n", ex.GetType().FullName.Replace("System.", ""), ex.Message); 
+                isFlagged = true;
             }
             finally { }
 
-            if (flag0 == false) //Checks user input flag
+            if (isFlagged == false) //User input flag
             {
                 if (funcVal % 2 == 0)
                 {
@@ -51,7 +51,7 @@ namespace TaskOne
         public static void DeepDive() //Creates 'funcVal' number of nested folders 
         {
             funcVal = 0;
-            flag0 = false;
+            isFlagged = false;
 
             try //User input 
             {
@@ -61,14 +61,14 @@ namespace TaskOne
                     funcVal = Convert.ToInt32(Console.ReadLine());
                 } while (funcVal <= 0);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("{0} catched.", e.GetType().ToString().Replace("System.", ""));
-                flag0 = true;
+                Console.WriteLine("\n{0} catched. \n{1} \n", ex.GetType().FullName.Replace("System.", ""), ex.Message);
+                isFlagged = true;
             }
             finally { }
 
-            if (flag0 == false) //Checks user input flag
+            if (isFlagged == false) //User input flag
             {
                 const Int32 nestLimit = 5;
                 if (funcVal > nestLimit)
@@ -83,43 +83,37 @@ namespace TaskOne
 
                 GuidList.Clear(); //Clears List before creating new directory
                
-                foreach (int index in Enumerable.Range(0, funcVal)) 
+                foreach (Int32 index in Enumerable.Range(0, funcVal)) 
                 {
                     pathDir.Append(@"\");
                     pathDir.Append(Guid.NewGuid().ToString());
 
                     GuidList.Add(pathDir.ToString()); //Add new element to GuidList
-                    
-                    if (flag0 == true)
-                    {
-                        break; //If creating directory failed once exit loop
-                    }
 
                     try
                     {
                         Directory.CreateDirectory(pathDir.ToString());                        
                     }
-                    catch (Exception e)
+                    catch (Exception ex)
                     {
-                        Console.WriteLine("{0} catched.", e.GetType().ToString().Replace("System.", ""));                        
-                        flag0 = true;
-
+                        Console.WriteLine("\n{0} catched. \n{1} \n", ex.GetType().FullName.Replace("System.", ""), ex.Message);
                         GuidList.Clear();
                         Console.WriteLine("No directory created.");
+                        break;
                     }
                     finally { }
                 }
             }
         }
 
-        public static void DrownItDown() //Create empty file in specific directory 
+        public static void DrownItDown() //Create empty file in specified directory 
         {
-            flag0 = false;
+            isFlagged = false;
             funcVal = 0;
 
             char choice;
 
-            if (GuidList.Count() <= 0) //Check if directory where even created at first place
+            if (GuidList.Count() <= 0) //If directory wasn't created
             {
                 try //User input
                 {
@@ -131,61 +125,46 @@ namespace TaskOne
                         DeepDive();
                     }
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Console.WriteLine("{0} catched.", e.GetType().ToString().Replace("System.", ""));
+                    Console.WriteLine("\n{0} catched. \n{1} \n", ex.GetType().FullName.Replace("System.", ""), ex.Message);
                 }
                 finally { }
             }
-            else //If not created at first place 
+            else //If was created
             {
                 try //User input 
                 {
                     do
                     {
-                        Console.Write("Enter how deep to make file: ");
+                        Console.Write("Enter how deep to make file <1, {0}>: ", GuidList.Count());
                         funcVal = Convert.ToInt32(Console.ReadLine());
                     } while (funcVal <= 0);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Console.WriteLine("{0} catched.", e.GetType().ToString().Replace("System.", ""));
-                    flag0 = true;
+                    Console.WriteLine("\n{0} catched. \n{1} \n", ex.GetType().FullName.Replace("System.", ""), ex.Message);
+                    isFlagged = true;
                 }
                 finally { }
 
-                if (GuidList.Count() <= funcVal) //Check if directory isn't empty
+                if (GuidList.Count() < funcVal) //If 'funcVal' is out of 'GuidList' range
                 {
-                    Console.WriteLine("There are no such subfolder! File can't created.");
+                    Console.WriteLine("There is no such subfolder! \nFile can't be created.");
                 }
                 else
                 {
-                    if (flag0 == false) //Checks user input flag
+                    if (isFlagged == false) //User input flag
                     {
-                        var fileName = "emptyfile.txt";
+                        string fileName = "emptyfile.txt";
 
-                        StringBuilder fileDir = new StringBuilder(); //File directory      
+                        StringBuilder fileDir = new StringBuilder(); //File directory
                         fileDir.Append(GuidList.ElementAt(funcVal - 1));
                         fileDir.Append(@"\");
                         fileDir.Append(fileName);
 
-                        if (!File.Exists(fileDir.ToString()))
+                        if (File.Exists(fileDir.ToString())) //If file exist already
                         {
-                            try
-                            {
-                                File.Create(fileDir.ToString()).Close();
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine("{0} catched.", e.GetType().ToString().Replace("System.", ""));
-                                flag0 = true;
-
-                                Console.WriteLine("No file created.");
-                            }
-                        }
-                        else //If file exit already
-                        {
-
                             try //User input
                             {
                                 Console.WriteLine("File exist already. Overwrite? Y/N");
@@ -197,9 +176,24 @@ namespace TaskOne
                                     File.Create(fileDir.ToString()).Close();
                                 }
                             }
-                            catch (Exception e)
+                            catch (Exception ex)
                             {
-                                Console.WriteLine("{0} catched.", e.GetType().ToString().Replace("System.", ""));
+                                Console.WriteLine("\n{0} catched. \n{1} \n", ex.GetType().FullName.Replace("System.", ""), ex.Message);
+                            }
+                            finally { }                            
+                        }
+                        else 
+                        {
+                            try //User input
+                            {
+                                File.Create(fileDir.ToString()).Close();
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine("\n{0} catched. \n{1} \n", ex.GetType().FullName.Replace("System.", ""), ex.Message);
+                                isFlagged = true;
+
+                                Console.WriteLine("No file created.");
                             }
                             finally { }
                         }
@@ -210,7 +204,7 @@ namespace TaskOne
 
         public static void Exit()
         {
-            //for debug mode use here -> Console.ReadKey();
+            //for debug mode use -> Console.ReadKey();
             return;
         }
 
