@@ -2,22 +2,42 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace TaskOne
 {
     class Program
     {
-        static List<string> GuidList = new List<string>();
-        static Int32 funcVal;
-        static bool isFlagged;
-        
-        public static void FizzBuzz() //Output if number is divisible by 2 and/or 3 
+        /// <summary>
+        /// List of directories.
+        /// </summary>
+        public static List<string> GuidList = new List<string>();
+
+        /// <summary>
+        /// User input value.
+        /// </summary>
+        public static Int32 funcVal;
+
+        /// <summary>
+        /// Exception occurrence flag.
+        /// </summary>
+        public static bool isFlagged;
+
+        /// <summary>
+        /// Output Fizz and/or Buzz if number is divisible by 2 or 3.
+        /// </summary>
+        /// <exception cref="FormatException">
+        /// Thrown when user input is pther than expected.
+        /// </exception>
+        /// <exception cref="OverflowException">
+        /// Thrown when user input is greater than MaxValue or smaller than MinValue.
+        /// </exception>
+        public static void FizzBuzz()
         {
+     
             funcVal = 0;
             isFlagged = false;
 
-            try //User input
+            try
             {
                 do
                 {
@@ -25,14 +45,14 @@ namespace TaskOne
                     funcVal = Convert.ToInt32(Console.ReadLine());
                 } while (!Enumerable.Range(0, 1000).Contains(funcVal));
             }
-            catch (Exception ex) //This handle any exception
+            catch (Exception ex)
             {
                 Console.WriteLine("\n{0} catched. \n{1} \n", ex.GetType().FullName.Replace("System.", ""), ex.Message); 
                 isFlagged = true;
             }
             finally { }
 
-            if (!isFlagged) //User input flag
+            if (!isFlagged)
             {
                 if (funcVal % 2 == 0)
                 {
@@ -47,13 +67,22 @@ namespace TaskOne
                 Console.WriteLine();
             }
         }
-        
-        public static void DeepDive() //Creates 'funcVal' number of nested folders 
+
+        /// <summary>
+        /// Creates number of nested folders.
+        /// </summary>
+        /// <exception cref="FormatException">
+        /// Thrown when user input is other than expected.
+        /// </exception>
+        /// <exception cref="OverflowException">
+        /// Thrown when user input is greater than MaxValue or smaller than MinValue.
+        /// </exception>
+        public static void DeepDive()
         {
             funcVal = 0;
             isFlagged = false;
 
-            try //User input 
+            try
             {
                 do
                 {
@@ -68,7 +97,7 @@ namespace TaskOne
             }
             finally { }
 
-            if (!isFlagged) //User input flag
+            if (!isFlagged)
             {
                 const Int32 nestLimit = 5;
                 if (funcVal > nestLimit)
@@ -76,23 +105,18 @@ namespace TaskOne
                     Console.WriteLine("Maximum of {0} nested folders can be created.", funcVal = nestLimit);
                 }
 
-                StringBuilder pathDir = new StringBuilder(); //Path of Directory
-                pathDir.Append(@"C:\Users\");
-                pathDir.Append(Environment.UserName);
-                pathDir.Append(@"\Desktop");                
+                string fullPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop); //Path of Directory
 
-                GuidList.Clear(); //Clears List before creating new directory
-               
+                GuidList.Clear(); //Clears List before creating new directory.
+
                 foreach (Int32 index in Enumerable.Range(0, funcVal)) 
                 {
-                    pathDir.Append(@"\");
-                    pathDir.Append(Guid.NewGuid().ToString());
-
-                    GuidList.Add(pathDir.ToString()); //Add new element to GuidList
+                    fullPath = Path.Combine(fullPath, Guid.NewGuid().ToString());
+                    GuidList.Add(fullPath); //Add new element to GuidList
 
                     try
                     {
-                        Directory.CreateDirectory(pathDir.ToString());                        
+                        Directory.CreateDirectory(fullPath);                        
                     }
                     catch (Exception ex)
                     {
@@ -101,12 +125,21 @@ namespace TaskOne
                         Console.WriteLine("No directory created.");
                         break;
                     }
-                    finally { }
+                    finally { }                    
                 }
             }
         }
 
-        public static void DrownItDown() //Create empty file in specified directory 
+        /// <summary>
+        /// Create empty file in specified directory.
+        /// </summary>
+        /// <exception cref="FormatException">
+        /// Thrown when user input is other than expected.
+        /// </exception>
+        /// <exception cref="OverflowException">
+        /// Thrown when user input is greater than MaxValue or smaller than MinValue.
+        /// </exception>
+        public static void DrownItDown()
         {
             isFlagged = false;
             funcVal = 0;
@@ -115,7 +148,7 @@ namespace TaskOne
 
             if (GuidList.Count() <= 0) //If directory wasn't created
             {
-                try //User input
+                try
                 {
                     Console.WriteLine("There are no folders. Want to Create some? Y/N");
                     choice = Convert.ToChar(Console.ReadLine());
@@ -133,7 +166,7 @@ namespace TaskOne
             }
             else //If was created
             {
-                try //User input 
+                try
                 {
                     do
                     {
@@ -154,26 +187,21 @@ namespace TaskOne
                 }
                 else
                 {
-                    if (!isFlagged) //User input flag
+                    if (!isFlagged)
                     {
-                        string fileName = "emptyfile.txt";
+                        string fullPath = Path.Combine(GuidList.ElementAt(funcVal - 1), "emptyfile.txt");
 
-                        StringBuilder fileDir = new StringBuilder(); //File directory
-                        fileDir.Append(GuidList.ElementAt(funcVal - 1));
-                        fileDir.Append(@"\");
-                        fileDir.Append(fileName);
-
-                        if (File.Exists(fileDir.ToString())) //If file exist already
+                        if (File.Exists(fullPath)) //If file exist already
                         {
-                            try //User input
+                            try
                             {
                                 Console.WriteLine("File exist already. Overwrite? Y/N");
                                 choice = Convert.ToChar(Console.ReadLine());
 
                                 if (choice == 'Y' || choice == 'y')
                                 {
-                                    File.Delete(fileDir.ToString());
-                                    File.Create(fileDir.ToString()).Close();
+                                    File.Delete(fullPath);
+                                    File.Create(fullPath).Close();
                                 }
                             }
                             catch (Exception ex)
@@ -184,9 +212,9 @@ namespace TaskOne
                         }
                         else 
                         {
-                            try //User input
+                            try
                             {
-                                File.Create(fileDir.ToString()).Close();
+                                File.Create(fullPath).Close();
                             }
                             catch (Exception ex)
                             {
@@ -200,13 +228,19 @@ namespace TaskOne
             }
         }
 
+        /// <summary>
+        /// Exit Method.
+        /// </summary>
         public static void Exit()
         {
             //for debug mode use -> Console.ReadKey();
             return;
         }
 
-        static void Main(string[] args)
+        /// <summary>
+        /// Main method.
+        /// </summary>
+        static void Main()
         {
             FizzBuzz();
             DeepDive();
